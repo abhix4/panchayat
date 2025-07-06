@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { nanoid } from 'nanoid';
 import Navbar from '@/app/components/Nav';
 import Chat from '@/app/components/chat';
@@ -33,6 +33,7 @@ export default function Page() {
     const[isOpen,setIsOpen] = useState(false)
     const[text,setText] = useState("")
     const theme = "dark"
+    const messagesEndRef = useRef<HTMLDivElement>(null)
     
     useEffect(() => {
 
@@ -92,6 +93,11 @@ export default function Page() {
         };
     }, []);
 
+    // Auto-scroll to bottom when new messages arrive
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
+
     function handleSubmit(){
         socket.send(JSON.stringify({
             type:"chat",
@@ -124,6 +130,7 @@ export default function Page() {
                         else return  <UserChat key={i++} message={x.message} avatar={x.avatarUrl} />
                     })
                 }
+                <div ref={messagesEndRef} />
            
 
             </div>
