@@ -9,6 +9,7 @@ import { PiSmileyStickerFill } from "react-icons/pi";
 import EmojiPicker from 'emoji-picker-react';
 import { roomStore } from '@/store/roomStore';
 import { userStore } from '@/store/userStore';
+import toast from 'react-hot-toast';
 
 type User = {
     socket : WebSocket ;
@@ -36,11 +37,14 @@ export default function Page() {
     const messagesEndRef = useRef<HTMLDivElement>(null)
     
     useEffect(() => {
+        toast.loading("Connecting to room ...")
 
         const socket = new WebSocket(`wss://panchayat-qf5o.onrender.com`);
 
         socket.onopen = () => {
-            console.log('WebSocket connection opened');     
+            console.log('WebSocket connection opened');  
+            toast.dismiss();
+       
             socket.send(JSON.stringify({
                 type:"join",
                 payload:{
@@ -49,7 +53,7 @@ export default function Page() {
                     avatarUrl : avatar
                 }
             }))   
-            
+            toast.success("Connected to room ")  
         };
 
         socket.onmessage = (event ) => {
@@ -108,6 +112,7 @@ export default function Page() {
                 avatarUrl:avatar
             }
         }))  
+        setText("")
     }
 
     
@@ -152,17 +157,29 @@ export default function Page() {
             }
             </div>
            
-            <div className='py-4 '>
+            <div className='pb-2'>
             <EmojiPicker open={isOpen} height={400} width={435} onEmojiClick={(e)=> setText((state)=> state + e.emoji)}/>
             </div>
            <div className="gap-2 flex py-1">
-                    <textarea name="message" id="message"  className="bg-slate-700 px-2 py-3 rounded-lg border-none outline-none text-[15px] w-[85%] text-slate-400" value={text} onChange={(e) => setText(e.target.value)}></textarea>
+                    <textarea
+                        name="message"
+                        id="message"
+                        className="bg-slate-700 px-2 py-3 rounded-lg border-none outline-none text-[15px] w-[85%] text-slate-400"
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleSubmit();
+                            }
+                        }}
+                    ></textarea>
                     <div className='text-slate-500 text-[32px] flex items-center' onClick={() => setIsOpen(!isOpen)}>
                     <PiSmileyStickerFill />
                     </div>
                     <button className="bg-slate-700 px-4 py-1 text-[16px] text-center rounded-full text-slate-300" onClick={() =>{
                         handleSubmit()
-                        setText("")
+                       
                     }}><IoSendSharp /></button>
                    
                    </div>

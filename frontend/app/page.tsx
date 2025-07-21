@@ -1,3 +1,4 @@
+import { Toaster } from "react-hot-toast";
 import { GradientBackground } from "./components/GradientBackground";
 import Navbar from "./components/Nav";
 import Landing from "./landing";
@@ -10,6 +11,7 @@ export default function Home() {
      <Navbar/>
      <Landing/>
      </div>
+     <Toaster position="bottom-center" />
      </GradientBackground>
     
    

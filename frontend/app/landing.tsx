@@ -2,9 +2,11 @@
 
 import  {motion} from "framer-motion" 
 import { useState } from "react";
-import { nanoid } from "nanoid";
+
 import { useRouter } from "next/navigation";
 import { roomStore } from "@/store/roomStore";
+import { BiCopy } from "react-icons/bi";
+import toast from "react-hot-toast";
 
 const randomId = function(length = 6) {
     return Math.random().toString(36).substring(2, length+2);
@@ -17,6 +19,11 @@ export default function Landing(){
     const [userRoom , setUserRoom] = useState("")
     const roomId = randomId() 
     const router = useRouter()
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(roomId);
+        toast.success("Room Id copied to clipboard!")
+    }
 
 
     return <div className="md:text-[54px] text-[24px] flex flex-col items-center justify-center text-center md:mt-48 mt-32 text-slate-50 gap-10 font-sans">
@@ -81,9 +88,10 @@ export default function Landing(){
                     initial={{ opacity: 0, y: 1 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="text-slate-300 md:text-[18px]  text-[16px] px-10 md:py-4 py-2 bg-slate-800 rounded-lg tracking-wider ease-in transition-all"
+                    className="text-slate-300 md:text-[18px]  text-[16px] px-10 md:py-4 py-2 bg-slate-800 rounded-lg tracking-wider ease-in transition-all flex gap-4 items-center"
                 >
                     Room Id : {roomId}
+                    <BiCopy className="cursor-pointer" size={16} onClick={handleCopy}/>
                 </motion.div>
             )
         }
